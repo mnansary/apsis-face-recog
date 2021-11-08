@@ -33,8 +33,8 @@ def facematcher(src,dest):
     obj=DeepFace.verify(src,dest,model_name = 'ArcFace', detector_backend = 'retinaface')
     
     match=obj["verified"]
-    similiarity_value=100- round(obj['distance']*100,2)
-    return {"match":match,"similiarity":similiarity_value}
+    similiarity_value=round(100- round(obj['distance']*100,2),2)
+    return {"match":match,"similiarity %":similiarity_value}
     
 @app.route('/', methods=['GET'])
 def index():
