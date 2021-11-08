@@ -17,11 +17,11 @@ from werkzeug.utils import secure_filename
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
-
+from deepface import DeepFace
 # Define a flask app
 app = Flask(__name__)
 
-from deepface import DeepFace
+
 def facematcher(src,dest):
     '''
         matches two given faces:
@@ -45,17 +45,33 @@ def index():
 @app.route('/predict', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
-        # Get the file from post request
-        f = request.files['file']
+        response={}
+        print(request.files.keys())
+        if 'image1' not in request.files:
+            response["error"]="image 1 not found"
+            return jsonify(response)
 
+        if 'image2' not in request.files:
+            response["error"]="image 2 not found"
+            return jsonify(response)
+        
         # Save the file to ./uploads
+        
         basepath = os.path.dirname(__file__)
-        file_path = os.path.join(basepath,"tests",'uploads', secure_filename(f.filename))
-        f.save(file_path)
 
-        response=ocr.extract(file_path)
+        image1 = request.files['image1']
+        src = os.path.join(basepath,'uploads', secure_filename(image1.filename))
+        image1.save(src)
+
+        image2 = request.files['image2']
+        dst = os.path.join(basepath,'uploads', secure_filename(image2.filename))
+        image2.save(dst)
+        # match
+        response=facematcher(src,dst)
+
         return jsonify(response)
     return None
+
 
 
 if __name__ == '__main__':

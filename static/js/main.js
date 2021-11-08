@@ -1,33 +1,48 @@
 $(document).ready(function () {
     // Init
-    $('.image-section').hide();
+    $('#btn-predict').hide();
     $('.loader').hide();
     $('#result').hide();
-
     // Upload Preview
-    function readURL(input) {
+    function readimg1(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
-                $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
-                $('#imagePreview').hide();
-                $('#imagePreview').fadeIn(650);
+                $('#imagePreview1').css('background-image', 'url(' + e.target.result + ')');
+                $('#imagePreview1').hide();
+                $('#imagePreview1').fadeIn(650);
+                
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
-    $("#imageUpload").change(function () {
-        $('.image-section').show();
+    function readimg2(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imagePreview2').css('background-image', 'url(' + e.target.result + ')');
+                $('#imagePreview2').hide();
+                $('#imagePreview2').fadeIn(650);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#imageUpload1").change(function () {
+        $('#result').text('');
+        $('#result').hide();
+        readimg1(this);
+    });
+    $("#imageUpload2").change(function () {
         $('#btn-predict').show();
         $('#result').text('');
         $('#result').hide();
-        readURL(this);
+        readimg2(this);
     });
 
     // Predict
     $('#btn-predict').click(function () {
-        var form_data = new FormData($('#upload-file')[0]);
-
+        var formdata = new FormData(document.getElementById("upload-file"));
         // Show loading animation
         $(this).hide();
         $('.loader').show();
@@ -36,7 +51,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'POST',
             url: '/predict',
-            data: form_data,
+            data: formdata,
             cache: false,
             processData: false,
             async: true,
